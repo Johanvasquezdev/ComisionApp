@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -24,6 +23,8 @@ interface FormErrors {
   pais?: string
 }
 
+const TASAS: Record<string, number> = { US: 0.15, India: 0.10, UK: 0.12 }
+
 export function CommissionForm() {
   const [ventas, setVentas] = useState("")
   const [descuentos, setDescuentos] = useState("")
@@ -39,7 +40,9 @@ export function CommissionForm() {
   } | null>(null)
 
   const formRef = useRef<HTMLDivElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Animación de entrada del formulario
   useEffect(() => {
     if (formRef.current) {
       animate(formRef.current, {
@@ -51,12 +54,13 @@ export function CommissionForm() {
     }
   }, [])
 
-  const validate = (): boolean => {
+  // Validar inputs y retornar true si son válidos
+  const validate = useCallback((v: string, d: string, p: string): boolean => {
     const newErrors: FormErrors = {}
-    const ventasNum = parseFloat(ventas) || 0
-    const descuentosNum = parseFloat(descuentos) || 0
+    const ventasNum = parseFloat(v) || 0
+    const descuentosNum = parseFloat(d) || 0
 
-    if (!ventas || ventasNum < 0) {
+    if (!v || ventasNum < 0) {
       newErrors.ventas = "Las ventas no pueden ser negativas"
     }
     if (descuentosNum < 0) {
@@ -65,57 +69,60 @@ export function CommissionForm() {
     if (descuentosNum > ventasNum) {
       newErrors.descuentos = "Los descuentos no pueden superar las ventas"
     }
-    if (!pais) {
+    if (!p) {
       newErrors.pais = "Selecciona un país"
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
-  }
+  }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setApiError(null)
-    setResult(null)
+  // Calcular automáticamente con debounce de 500ms cuando cambian los valores
+  useEffect(() => {
+    // Limpiar timer anterior
+    if (debounceRef.current) clearTimeout(debounceRef.current)
 
-    if (!validate()) {
-      if (formRef.current) {
-        animate(formRef.current, {
-          translateX: [-10, 10, -10, 10, 0],
-          duration: 400,
-          ease: "inOutSine",
-        })
-      }
+    // No calcular si no hay valores aún
+    if (!ventas && !descuentos && !pais) {
+      setResult(null)
       return
     }
 
-    setLoading(true)
+    debounceRef.current = setTimeout(async () => {
+      if (!validate(ventas, descuentos, pais)) return
 
-    try {
-      const ventasNum = parseFloat(ventas)
-      const descuentosNum = parseFloat(descuentos) || 0
-      
-      const data = await calcularComision({
-        ventas: ventasNum,
-        descuentos: descuentosNum,
-        pais,
-      })
+      setLoading(true)
+      setApiError(null)
 
-      // Get tasa for display
-      const tasas: Record<string, number> = { "US": 0.15, "India": 0.10, "UK": 0.12 };
+      try {
+        const ventasNum = parseFloat(ventas)
+        const descuentosNum = parseFloat(descuentos) || 0
 
-      setResult({
-        comision: data.comision,
-        ventas: ventasNum,
-        descuentos: descuentosNum,
-        tasa: tasas[pais] || 0,
-      })
-    } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Error al conectar con el servidor")
-    } finally {
-      setLoading(false)
+        const data = await calcularComision({
+          ventas: ventasNum,
+          descuentos: descuentosNum,
+          pais,
+        })
+
+        setResult({
+          comision: data.comision,
+          ventas: ventasNum,
+          descuentos: descuentosNum,
+          tasa: TASAS[pais] || 0,
+        })
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : "Error al conectar con el servidor")
+        setResult(null)
+      } finally {
+        setLoading(false)
+      }
+    }, 500)
+
+    // Cleanup al desmontar
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }
+  }, [ventas, descuentos, pais, validate])
 
   return (
     <div className="space-y-6">
@@ -128,7 +135,8 @@ export function CommissionForm() {
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-5">
+
             <div className="space-y-2">
               <Label htmlFor="ventas" className="text-foreground/80">Ventas Totales</Label>
               <Input
@@ -181,23 +189,21 @@ export function CommissionForm() {
               )}
             </div>
 
+            {/* Indicador de carga automática */}
+            {loading && (
+              <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm py-1">
+                <Spinner className="w-4 h-4" />
+                <span>Calculando...</span>
+              </div>
+            )}
+
             {apiError && (
               <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 animate-in slide-in-from-top-2">
                 <AlertDescription className="text-xs font-semibold">{apiError}</AlertDescription>
               </Alert>
             )}
 
-            <Button type="submit" className="w-full bg-primary hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-primary/20 h-11 text-base font-bold" disabled={loading}>
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <Spinner className="w-4 h-4" />
-                  <span>Calculando...</span>
-                </div>
-              ) : (
-                "Calcular Comisión"
-              )}
-            </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
