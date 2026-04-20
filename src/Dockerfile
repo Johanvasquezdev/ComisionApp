@@ -12,7 +12,7 @@ COPY src/ComissionApp.API/ ./ComissionApp.API/
 
 # Publicar desde el proyecto API
 WORKDIR /src/ComissionApp.API
-RUN dotnet publish "CommisionApp.Api.csproj" -c Release -o /app/out
+RUN dotnet publish "ComisionApp.Api.csproj" -c Release -o /app/out
 
 FROM base AS final
 WORKDIR /app
