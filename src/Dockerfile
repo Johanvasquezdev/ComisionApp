@@ -5,13 +5,19 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiar todos los proyectos
-COPY src/ComissionApp.Domain/ ./ComissionApp.Domain/
-COPY src/ComissionApp.Application/ ./ComissionApp.Application/
-COPY src/ComissionApp.API/ ./ComissionApp.API/
+# Copiar archivos de proyecto para restaurar dependencias
+COPY ComisionApp.Domain/ComisionApp.Domain.csproj ./ComisionApp.Domain/
+COPY ComisionApp.Application/ComisionApp.Application.csproj ./ComisionApp.Application/
+COPY ComisionApp.API/ComisionApp.Api.csproj ./ComisionApp.API/
 
-# Publicar desde el proyecto API
-WORKDIR /src/ComissionApp.API
+RUN dotnet restore "ComisionApp.API/ComisionApp.Api.csproj"
+
+# Copiar el resto de los archivos y publicar
+COPY ComisionApp.Domain/ ./ComisionApp.Domain/
+COPY ComisionApp.Application/ ./ComisionApp.Application/
+COPY ComisionApp.API/ ./ComisionApp.API/
+
+WORKDIR /src/ComisionApp.API
 RUN dotnet publish "ComisionApp.Api.csproj" -c Release -o /app/out
 
 FROM base AS final

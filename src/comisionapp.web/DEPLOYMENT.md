@@ -9,7 +9,7 @@ El backend es una API construida con .NET 8. Puede desplegarse en **Azure App Se
 ### Pasos para preparar el despliegue:
 
 1. **Publicar el API**:
-   Ejecuta el siguiente comando en la carpeta `src/ComissionApp.API`:
+   Ejecuta el siguiente comando en la carpeta `src/ComisionApp.API`:
    ```bash
    dotnet publish -c Release -o ./publish
    ```

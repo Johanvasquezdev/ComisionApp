@@ -6,6 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ComissionApp.Domain\CommisionApp.Domain.csproj" />
+    <ProjectReference Include="..\ComisionApp.Domain\ComisionApp.Domain.csproj" />
   </ItemGroup>
 </Project>
