@@ -17,4 +17,4 @@ RUN dotnet publish "CommisionApp.Api.csproj" -c Release -o /app/out
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/out .
-ENTRYPOINT ["dotnet", "CommisionApp.Api.dll"]
+ENTRYPOINT ["dotnet", "ComisionApp.Api.dll"]
