@@ -4,7 +4,7 @@ Aplicación web fullstack para calcular comisiones de ventas por país, construi
 
 ---
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/24c9371f-4757-4b81-ab49-b47180ad9da6" width="350"/>
+  <img src="https://github.com/user-attachments/assets/24c9371f-4757-4b81-ab49-b47180ad9da6" width="602"/>
 </p>
 
 <p align="center">
