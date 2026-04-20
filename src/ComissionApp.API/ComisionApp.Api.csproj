@@ -10,6 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ComissionApp.Application\CommisionApp.Application.csproj" />
+        <ProjectReference Include="..\ComissionApp.Application\ComissionApp.Application.csproj" />
     </ItemGroup>
 </Project>
