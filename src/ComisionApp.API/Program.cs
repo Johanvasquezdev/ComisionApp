@@ -1,8 +1,9 @@
 using ComisionApp.Application.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
-var frontendOrigin = builder.Configuration["FrontendOrigin"] ?? "http://localhost:3000";
-
+var frontendOrigin = Environment.GetEnvironmentVariable("FrontendOrigin")
+                     ?? builder.Configuration["FrontendOrigin"]
+                     ?? "http://localhost:3000";
 // Registrar el caso de uso en el contenedor de DI nativo de ASP.NET Core
 builder.Services.AddScoped<CalcularComisionUseCase>();
 
