@@ -211,7 +211,7 @@ Calcula la comisión de un vendedor según sus datos de ventas.
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-org/ComisionApp.git
+git clone https://github.com/Johanvasquezdev/ComisionApp.git
 cd ComisionApp
 ```
 
