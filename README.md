@@ -66,6 +66,18 @@ El sistema sigue una **Clean Architecture de 3 capas** en el backend, con un fro
 
 La capa de datos en este sistema está representada por los DTOs de entrada que transportan los datos del usuario hacia la lógica de negocio. No se requiere persistencia porque la calculadora es una operación sin estado — no hay nada que guardar entre cálculos.
 
+Este proyecto implementa Clean Architecture:
+
+- Domain: reglas de negocio y estrategias de comisión
+- Application: casos de uso y DTOs
+- API: capa de exposición HTTP
+- Web: interfaz de usuario en Next.js
+
+Patrones utilizados:
+- Strategy Pattern (cálculo por país)
+- Separation of Concerns
+- Dependency Inversion
+
 ### Responsabilidades por capa
 
 | Capa           | Responsabilidad                                                                                                   |
