@@ -3,7 +3,13 @@
 Aplicación web fullstack para calcular comisiones de ventas por país, construida con **Next.js** en el frontend y **.NET 8 Web API** en el backend, siguiendo los principios de **Clean Architecture**.
 
 ---
-<img width="602" height="843" alt="image" src="https://github.com/user-attachments/assets/24c9371f-4757-4b81-ab49-b47180ad9da6" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/24c9371f-4757-4b81-ab49-b47180ad9da6" width="350"/>
+</p>
+
+<p align="center">
+  <em>Vista de la aplicación en funcionamiento</em>
+</p>
 
 
 
